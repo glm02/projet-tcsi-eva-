@@ -1,1 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upcycling Music | Communication B2B & Économie Circulaire</title>
+    
+    <!-- Typographie "Inter" (Shopify Style) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            dark: '#1A1C1E', // Anthracite
+                            light: '#F4F4F0', // Blanc cassé
+                            copper: '#C86B3C', // Cuivre
+                            sage: '#8BA88E', // Vert éco
+                            gray: '#8E9599' // Gris texte
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F4F4F0; color: #1A1C1E; overflow-x: hidden; }
+        
+        /* Arrière-plans texturés */
+        .bg-industrial {
+            background-image: linear-gradient(rgba(26, 28, 30, 0.85), rgba(26, 28, 30, 0.95)), url('https://images.unsplash.com/photo-1504913659239-6abc87875a63?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        
+        /* Animations d'apparition (Scroll Reveal) */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.2s; }
+        .reveal-delay-2 { transition-delay: 0.4s; }
+
+        /* Animation des barres de graphiques */
+        .chart-bar { width: 0; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+        /* Sidebar Mobile Transitions */
+        #mobile-sidebar { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        #sidebar-overlay { transition: opacity 0.4s ease; }
+        
+        /* Animation du Pop-up */
+        #popup-modal { transition: opacity 0.4s ease, visibility 0.4s ease; }
+        #popup-content { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .popup-hidden { opacity: 0; visibility: hidden; }
+        .popup-hidden #popup-content { transform: scale(0.9) translateY(20px); }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-copper selection:text-white">
+
+    <!-- NAVIGATION (Header) -->
+    <nav id="navbar" class="fixed w-full z-40 bg-brand-light/95 backdrop-blur-md border-b border-gray-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <i class="ph-fill ph-speaker-hifi text-3xl text-brand-copper"></i>
+                    <span class="font-bold text-xl md:text-2xl tracking-tight uppercase">Upcycling Music</span>
+                </div>
+                
+                <!-- Menu Desktop -->
+                <div class="hidden lg:flex space-x-8 items-center">
+                    <a href="#concept" class="text-sm font-medium text-brand-dark hover:text-brand-copper transition-colors">Concept</a>
+                    <a href="#impact" class="text-sm font-medium text-brand-dark hover:text-brand-copper transition-colors">Notre Impact</a>
+                    <a href="#equipe" class="text-sm font-medium text-brand-dark hover:text-brand-copper transition-colors">L'Équipe</a>
+                    <a href="#produit" class="text-sm font-medium text-brand-dark hover:text-brand-copper transition-colors">Boutique</a>
+                    <a href="#contact" class="bg-brand-dark text-white px-5 py-2.5 rounded text-sm font-medium hover:bg-brand-copper transition-colors shadow-lg">Devis B2B</a>
+                </div>
+
+                <!-- Bouton Burger (Mobile) -->
+                <div class="lg:hidden flex items-center">
+                    <button id="open-sidebar" class="text-brand-dark hover:text-brand-copper focus:outline-none p-2">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR MOBILE -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-brand-dark/60 backdrop-blur-sm z-40 hidden opacity-0"></div>
+    <aside id="mobile-sidebar" class="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-brand-light shadow-2xl z-50 transform translate-x-full flex flex-col">
+        <div class="p-6 flex justify-between items-center border-b border-gray-200">
+            <span class="font-bold text-xl uppercase tracking-tight">Menu</span>
+            <button id="close-sidebar" class="text-brand-dark hover:text-brand-copper p-2">
+                <i class="ph ph-x text-2xl"></i>
+            </button>
+        </div>
+        <div class="flex flex-col p-6 space-y-6 overflow-y-auto">
+            <a href="#concept" class="mobile-link text-xl font-medium text-brand-dark flex items-center gap-3"><i class="ph ph-recycle text-brand-copper"></i> Concept</a>
+            <a href="#impact" class="mobile-link text-xl font-medium text-brand-dark flex items-center gap-3"><i class="ph ph-chart-bar text-brand-copper"></i> Impact & Graphiques</a>
+            <a href="#equipe" class="mobile-link text-xl font-medium text-brand-dark flex items-center gap-3"><i class="ph ph-users text-brand-copper"></i> L'Équipe TCSI</a>
+            <a href="#produit" class="mobile-link text-xl font-medium text-brand-dark flex items-center gap-3"><i class="ph ph-guitar text-brand-copper"></i> Nos Instruments</a>
+            <a href="#sponsor" class="mobile-link text-xl font-medium text-brand-dark flex items-center gap-3"><i class="ph ph-handshake text-brand-copper"></i> Partenaires</a>
+            
+            <div class="pt-6 mt-6 border-t border-gray-200">
+                <a href="#contact" class="mobile-link w-full block text-center bg-brand-copper text-white px-6 py-4 rounded-lg text-lg font-bold shadow-lg shadow-brand-copper/30">
+                    Demander un devis
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- POP-UP GLOBAL (Salon TCSI) -->
+    <div id="popup-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/80 backdrop-blur-sm popup-hidden px-4">
+        <div id="popup-content" class="relative bg-brand-light w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-brand-copper/30">
+            <button onclick="closePopup()" class="absolute top-4 right-4 text-brand-gray hover:text-brand-dark transition-colors bg-white/50 rounded-full p-1">
+                <i class="ph ph-x text-2xl"></i>
+            </button>
+            <div class="p-6 md:p-8 text-center">
+                <div class="w-16 h-16 bg-brand-copper/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand-copper/20">
+                    <i class="ph ph-rocket-launch text-3xl text-brand-copper"></i>
+                </div>
+                <h3 class="text-xl md:text-2xl font-bold mb-3 text-brand-dark">Rencontrons-nous au Salon TCSI !</h3>
+                <p class="text-brand-gray mb-6 leading-relaxed text-sm md:text-base">
+                    L'équipe Upcycling Music sera présente le <strong>16 juin à Lyon</strong>. Venez découvrir notre premier instrument éco-conçu et échanger sur vos futurs projets B2B de valorisation de déchets.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="closePopup()" class="px-6 py-3 border border-gray-300 text-brand-dark font-medium rounded-lg hover:bg-gray-100 transition-colors w-full sm:w-auto">
+                        Plus tard
+                    </button>
+                    <a href="#contact" onclick="closePopup()" class="px-6 py-3 bg-brand-copper text-white font-medium rounded-lg hover:bg-[#a64d12] transition-colors shadow-lg shadow-brand-copper/30 w-full sm:w-auto">
+                        Prendre rendez-vous
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. HERO SECTION -->
+    <section class="relative pt-32 pb-20 md:pt-48 md:pb-32 bg-industrial flex items-center min-h-[90vh]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center w-full">
+            <span class="reveal inline-block py-1 px-4 rounded-full bg-brand-sage/20 border border-brand-sage/50 text-brand-sage text-xs md:text-sm font-semibold tracking-wide uppercase mb-6 backdrop-blur-sm">
+                Communication par la matière
+            </span>
+            <h1 class="reveal reveal-delay-1 text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight">
+                Donnez une nouvelle <br class="hidden md:block" />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-copper to-yellow-500 drop-shadow-lg">résonance</span> à votre industrie.
+            </h1>
+            <p class="reveal reveal-delay-2 mt-4 max-w-2xl text-base md:text-xl text-gray-300 mx-auto mb-10 leading-relaxed font-light px-4">
+                Nous transformons vos rebuts industriels en instruments de musique uniques. Un outil RSE puissant et palpable pour sublimer votre image de marque auprès de vos partenaires.
+            </p>
+            <div class="reveal reveal-delay-2 flex flex-col sm:flex-row justify-center gap-4 px-4">
+                <a href="#concept" class="px-8 py-4 bg-brand-copper text-white rounded-lg font-bold text-lg hover:bg-[#a64d12] transition-colors shadow-xl shadow-brand-copper/20 flex items-center justify-center gap-2 w-full sm:w-auto">
+                    Découvrir le concept <i class="ph ph-arrow-down"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Vague décorative en bas -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-20">
+            <svg class="relative block w-full h-[30px] md:h-[60px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,120.22,192.39,109.43Z" fill="#F4F4F0"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- 2. SECTION CONCEPT -->
+    <section id="concept" class="py-20 md:py-32 bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12 md:mb-20 reveal">
+                <h2 class="text-3xl md:text-5xl font-bold text-brand-dark mb-6 tracking-tight">La symphonie circulaire</h2>
+                <p class="text-brand-gray text-base md:text-lg">Nous vous accompagnons pour auditer vos déchets et concevoir une pièce maîtresse qui raconte physiquement l'histoire de votre transition écologique.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Pilier 1 -->
+                <div class="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group reveal">
+                    <div class="w-16 h-16 bg-brand-sage/10 text-brand-sage rounded-xl flex items-center justify-center text-4xl mb-6 group-hover:-translate-y-2 transition-transform">
+                        <i class="ph ph-recycle"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-brand-dark">Économie circulaire</h3>
+                    <p class="text-brand-gray text-sm leading-relaxed">
+                        Nous collectons et valorisons les chutes (bois, métaux) de votre propre production. Ce processus réduit votre empreinte carbone et donne une seconde vie noble à la matière.
+                    </p>
+                </div>
+                <!-- Pilier 2 -->
+                <div class="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group reveal reveal-delay-1 md:-translate-y-6">
+                    <div class="w-16 h-16 bg-brand-copper/10 text-brand-copper rounded-xl flex items-center justify-center text-4xl mb-6 group-hover:-translate-y-2 transition-transform">
+                        <i class="ph ph-wave-sine"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-brand-dark">Qualité Acoustique</h3>
+                    <p class="text-brand-gray text-sm leading-relaxed">
+                        Nos instruments ne sont pas que décoratifs. Modélisés sur CAO, ils garantissent une jouabilité réelle et une résonance sonore exceptionnelle étudiée par nos ingénieurs.
+                    </p>
+                </div>
+                <!-- Pilier 3 -->
+                <div class="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 group reveal reveal-delay-2">
+                    <div class="w-16 h-16 bg-brand-dark/5 text-brand-dark rounded-xl flex items-center justify-center text-4xl mb-6 group-hover:-translate-y-2 transition-transform">
+                        <i class="ph ph-megaphone"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-brand-dark">Image de Marque</h3>
+                    <p class="text-brand-gray text-sm leading-relaxed">
+                        Exposez l'instrument dans votre showroom ou offrez-le. C'est un outil de communication RSE sur-mesure qui prouve concrètement vos engagements à vos clients.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. SECTION GRAPHIQUES & IMPACT (NOUVEAU) -->
+    <section id="impact" class="py-20 md:py-32 bg-white border-y border-gray-200 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                <!-- Textes -->
+                <div class="lg:w-1/2 reveal w-full">
+                    <span class="text-brand-copper font-bold uppercase tracking-wider text-sm mb-2 block">Data & RSE</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-dark mb-6">Des résultats mesurables pour votre bilan RSE.</h2>
+                    <p class="text-brand-gray mb-8 leading-relaxed text-base md:text-lg">
+                        Transformer un déchet industriel en objet d'art n'est pas qu'une démarche symbolique. C'est une action directe qui améliore vos statistiques environnementales et s'intègre parfaitement dans vos rapports annuels B2B.
+                    </p>
+                    
+                    <!-- Liste à puces visuelle -->
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-brand-dark font-medium"><i class="ph-fill ph-check-circle text-brand-sage text-xl"></i> Diminution des coûts de destruction</li>
+                        <li class="flex items-center gap-3 text-brand-dark font-medium"><i class="ph-fill ph-check-circle text-brand-sage text-xl"></i> Amélioration de la marque employeur</li>
+                        <li class="flex items-center gap-3 text-brand-dark font-medium"><i class="ph-fill ph-check-circle text-brand-sage text-xl"></i> Objet de relation publique unique</li>
+                    </ul>
+                </div>
+
+                <!-- Graphiques animés -->
+                <div class="lg:w-1/2 w-full bg-brand-light p-6 md:p-10 rounded-2xl border border-gray-200 shadow-inner reveal reveal-delay-1" id="charts-container">
+                    <h3 class="font-bold text-xl text-brand-dark mb-8 flex items-center gap-2">
+                        <i class="ph ph-chart-line-up text-brand-copper"></i> Projection Moyenne par Projet
+                    </h3>
+                    
+                    <!-- Graphique 1 -->
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2 text-sm md:text-base">
+                            <span class="font-bold text-brand-dark">Matière revalorisée (Acier/Bois)</span>
+                            <span class="text-brand-copper font-bold">100%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 md:h-4 overflow-hidden">
+                            <div class="bg-brand-copper h-3 md:h-4 rounded-full chart-bar" data-width="100%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Graphique 2 -->
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-2 text-sm md:text-base">
+                            <span class="font-bold text-brand-dark">Réduction de l'empreinte carbone locale</span>
+                            <span class="text-brand-sage font-bold">~85%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 md:h-4 overflow-hidden">
+                            <div class="bg-brand-sage h-3 md:h-4 rounded-full chart-bar" data-width="85%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Graphique 3 -->
+                    <div class="mb-2">
+                        <div class="flex justify-between mb-2 text-sm md:text-base">
+                            <span class="font-bold text-brand-dark">Engagement perçu par vos clients</span>
+                            <span class="text-yellow-600 font-bold">92%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 md:h-4 overflow-hidden">
+                            <div class="bg-yellow-500 h-3 md:h-4 rounded-full chart-bar" data-width="92%"></div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-6 text-right italic">*Données estimées sur un cycle de prototypage B2B classique.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. L'ÉQUIPE -->
+    <section id="equipe" class="py-20 md:py-32 bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+                <span class="text-brand-copper font-bold uppercase tracking-wider text-sm mb-2 block">BUT TCSI - Lyon</span>
+                <h2 class="text-3xl md:text-5xl font-bold text-brand-dark mb-4 tracking-tight">L'Équipe fondatrice</h2>
+                <p class="text-brand-gray text-base md:text-lg">De la modélisation 3D à la stratégie B2B, notre synergie nous permet de gérer votre projet de A à Z.</p>
+            </div>
+
+            <!-- Grille de l'équipe adaptative pour mobile -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <!-- Eva -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all text-center reveal">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop" alt="Eva" class="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-brand-light shadow-md">
+                    <h4 class="text-xl font-bold text-brand-dark">Eva</h4>
+                    <p class="text-xs font-bold text-brand-copper uppercase tracking-wider mb-3">Communication & Design</p>
+                    <p class="text-sm text-brand-gray">Spécialiste du storytelling B2B pour retranscrire l'histoire de votre entreprise.</p>
+                </div>
+                <!-- Raphaël -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all text-center reveal reveal-delay-1">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&auto=format&fit=crop" alt="Raphaël" class="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-brand-light shadow-md">
+                    <h4 class="text-xl font-bold text-brand-dark">Raphaël</h4>
+                    <p class="text-xs font-bold text-brand-dark uppercase tracking-wider mb-3">Ingénierie Acoustique</p>
+                    <p class="text-sm text-brand-gray">Maître d'œuvre de la matière. Il transforme vos déchets en opportunités sonores.</p>
+                </div>
+                <!-- Lamia -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all text-center reveal reveal-delay-2">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="Lamia" class="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-brand-light shadow-md">
+                    <h4 class="text-xl font-bold text-brand-dark">Lamia</h4>
+                    <p class="text-xs font-bold text-brand-sage uppercase tracking-wider mb-3">Relations B2B & RSE</p>
+                    <p class="text-sm text-brand-gray">Votre lien privilégié. Elle vous aide à valoriser votre démarche RSE.</p>
+                </div>
+                <!-- Kayna -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all text-center reveal reveal-delay-2">
+                    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=200&auto=format&fit=crop" alt="Kayna" class="w-24 h-24 mx-auto rounded-full object-cover mb-4 border-4 border-brand-light shadow-md">
+                    <h4 class="text-xl font-bold text-brand-dark">Kayna</h4>
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Gestion de Projet</p>
+                    <p class="text-sm text-brand-gray">Cheffe d'orchestre. Elle assure le sourcing des matériaux et le respect des délais.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. BOUTIQUE / PRODUIT -->
+    <section id="produit" class="py-20 md:py-32 bg-brand-dark text-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col lg:flex-row gap-12 md:gap-16 items-center">
+                <!-- Visuel Produit adapté mobile -->
+                <div class="lg:w-1/2 w-full reveal">
+                    <div class="bg-white/5 p-2 md:p-4 rounded-3xl border border-white/10 backdrop-blur-sm">
+                        <!-- Image Principale -->
+                        <div class="aspect-square bg-gray-900 rounded-2xl overflow-hidden relative">
+                            <img src="https://images.unsplash.com/photo-1550291652-6ea9114a47b1?q=80&w=1000&auto=format&fit=crop" alt="Instrument Upcycling" class="w-full h-full object-cover opacity-80 hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-brand-copper text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Prototype 01</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Détails Produit -->
+                <div class="lg:w-1/2 w-full reveal reveal-delay-1">
+                    <span class="text-brand-copper font-bold tracking-wider uppercase text-sm mb-2 block">Édition Limitée</span>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6">Le "Prototype Alpha"</h2>
+                    <p class="text-gray-300 text-base md:text-lg mb-8 leading-relaxed">
+                        Notre démonstrateur B2B hybride. Il marie la chaleur organique du chêne de récupération à la précision froide de l'acier industriel. Une preuve de concept saisissante pour vos locaux.
+                    </p>
+                    
+                    <div class="space-y-6 mb-10">
+                        <div class="flex gap-4 items-start">
+                            <div class="text-brand-copper"><i class="ph ph-speaker-high text-2xl md:text-3xl"></i></div>
+                            <div>
+                                <h4 class="font-bold text-lg">Acoustique de précision</h4>
+                                <p class="text-gray-400 text-sm">Caisse de résonance calculée numériquement pour un timbre chaud.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="text-brand-sage"><i class="ph ph-leaf text-2xl md:text-3xl"></i></div>
+                            <div>
+                                <h4 class="font-bold text-lg">Matériaux Brut Industriels</h4>
+                                <p class="text-gray-400 text-sm">Bois massif, acier trempé et visserie de récupération technique.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 p-6 rounded-xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <div class="text-center sm:text-left">
+                            <span class="block text-gray-400 text-sm mb-1 uppercase tracking-widest">Tarif B2B estimatif</span>
+                            <span class="text-3xl md:text-4xl font-bold text-white">250 € <span class="text-lg text-gray-500 font-normal">HT</span></span>
+                        </div>
+                        <div class="flex flex-col gap-3 w-full sm:w-auto">
+                            <a href="#contact" class="w-full bg-brand-copper text-white px-8 py-3 rounded-lg font-bold hover:bg-[#a64d12] transition-colors text-center shadow-lg">
+                                Demander un devis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. PARTENAIRE / SPONSOR -->
+    <section id="sponsor" class="py-20 md:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-12 items-center bg-brand-light p-6 md:p-12 rounded-3xl border border-gray-200 shadow-sm reveal">
+                <!-- Vidéo/Photo Placeholder -->
+                <div class="w-full lg:w-1/2 order-2 lg:order-1">
+                    <div class="aspect-video bg-gray-900 rounded-2xl overflow-hidden relative group cursor-pointer shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1565439385311-826a3cb98e6d?q=80&w=1000&auto=format&fit=crop" alt="Atelier industriel" class="w-full h-full object-cover opacity-70 group-hover:opacity-50 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-brand-copper rounded-full flex items-center justify-center text-white pl-1 shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="ph-fill ph-play text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-4 left-4 bg-brand-dark/80 backdrop-blur px-3 py-1 rounded text-white text-xs font-bold">
+                            Voir le processus
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-1/2 order-1 lg:order-2 text-center lg:text-left">
+                    <span class="text-brand-sage font-bold uppercase tracking-wider text-xs md:text-sm mb-3 block">Sponsor Principal</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-dark mb-6 tracking-tight">Une collaboration qui fait du bruit avec <span class="text-brand-copper">Flexof</span>.</h2>
+                    <p class="text-brand-gray text-base md:text-lg mb-6 leading-relaxed">
+                        L'innovation nécessite de s'entourer d'acteurs engagés. Basée à Francheville (Lyon), l'entreprise industrielle Flexof a cru en notre vision étudiante.
+                    </p>
+                    <p class="text-brand-gray text-base md:text-lg mb-8 leading-relaxed">
+                        En nous fournissant gracieusement les matériaux métalliques essentiels à notre prototype, Flexof prouve de manière tangible son engagement fort en matière de RSE et d'économie circulaire.
+                    </p>
+                    <a href="#" class="inline-flex items-center justify-center gap-2 bg-brand-dark text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors w-full sm:w-auto">
+                        Visiter Flexof.fr <i class="ph ph-arrow-up-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. CONTACT -->
+    <section id="contact" class="py-20 md:py-32 bg-brand-light border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row reveal border border-gray-100">
+                <!-- Info -->
+                <div class="bg-brand-dark text-white p-10 md:p-16 lg:w-2/5 flex flex-col justify-between relative overflow-hidden">
+                    <!-- Décoration fond -->
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-brand-copper/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                    
+                    <div class="relative z-10">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-4">Prêts à faire résonner votre marque ?</h2>
+                        <p class="text-gray-400 mb-12 text-sm md:text-base">Que ce soit pour un audit de vos déchets industriels, un sponsoring ou la commande d'un instrument sur-mesure.</p>
+                        
+                        <div class="space-y-8">
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-brand-copper group-hover:bg-brand-copper group-hover:text-white transition-colors"><i class="ph ph-envelope-simple text-xl"></i></div>
+                                <div><p class="text-xs text-gray-400 uppercase">E-mail</p><a href="mailto:upcyclingmusic@gmail.com" class="font-medium text-sm md:text-base">upcyclingmusic@gmail.com</a></div>
+                            </div>
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-brand-copper group-hover:bg-brand-copper group-hover:text-white transition-colors"><i class="ph ph-instagram-logo text-xl"></i></div>
+                                <div><p class="text-xs text-gray-400 uppercase">Réseaux</p><a href="#" class="font-medium text-sm md:text-base">@music.upcycling</a></div>
+                            </div>
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-brand-copper group-hover:bg-brand-copper group-hover:text-white transition-colors"><i class="ph ph-map-pin text-xl"></i></div>
+                                <div><p class="text-xs text-gray-400 uppercase">Localisation</p><p class="font-medium text-sm md:text-base">Campus BUT TCSI, Lyon</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire -->
+                <div class="p-8 md:p-16 lg:w-3/5">
+                    <h3 class="text-2xl font-bold mb-8 text-brand-dark">Formulaire de contact B2B</h3>
+                    <form id="b2b-form" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nom complet</label>
+                                <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-copper focus:ring-1 focus:ring-brand-copper transition-all" type="text" placeholder="Jean Dupont" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Entreprise</label>
+                                <input class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-copper focus:ring-1 focus:ring-brand-copper transition-all" type="text" placeholder="Nom de votre société" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Type de demande</label>
+                            <select class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-copper focus:ring-1 focus:ring-brand-copper transition-all appearance-none cursor-pointer">
+                                <option>Devis projet B2B complet</option>
+                                <option>Sponsoring / Partenariat</option>
+                                <option>Demande d'informations</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Détails du projet</label>
+                            <textarea class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-copper focus:ring-1 focus:ring-brand-copper transition-all resize-none h-32" placeholder="Décrivez votre projet, vos matériaux disponibles..." required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-brand-dark text-white font-bold py-4 px-6 rounded-lg hover:bg-brand-copper transition-colors mt-4 flex justify-center items-center gap-2 shadow-lg">
+                            Envoyer la demande <i class="ph ph-paper-plane-tilt text-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-dark text-gray-400 py-12 text-center md:text-left">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-start gap-8 border-b border-white/10 pb-8 mb-8">
+                <div class="max-w-xs mx-auto md:mx-0">
+                    <div class="flex items-center gap-2 text-white mb-4 justify-center md:justify-start">
+                        <i class="ph-fill ph-speaker-hifi text-2xl text-brand-copper"></i>
+                        <span class="font-bold text-xl uppercase tracking-tight">Upcycling Music</span>
+                    </div>
+                    <p class="text-sm">Cabinet étudiant de conseil en communication par la valorisation de la matière.</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="text-brand-sage font-bold uppercase tracking-wider text-xs mb-2">Sponsorisé par</span>
+                    <a href="#" class="text-white hover:text-brand-copper transition-colors font-medium">Flexof (Lyon)</a>
+                </div>
+            </div>
+            <div class="text-xs flex flex-col md:flex-row justify-between items-center gap-4">
+                <p>&copy; 2024 Projet Étudiant BUT TCSI Lyon - Eva, Raphaël, Lamia, Kayna.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white transition">Mentions légales</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIQUE JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. GESTION DU POP-UP
+            const popup = document.getElementById('popup-modal');
+            if(popup) {
+                setTimeout(() => popup.classList.remove('popup-hidden'), 2500);
+                popup.addEventListener('click', (e) => {
+                    if(e.target === popup) closePopup();
+                });
+            }
+
+            // 2. GESTION DE LA SIDEBAR (MOBILE)
+            const sidebar = document.getElementById('mobile-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const btnOpen = document.getElementById('open-sidebar');
+            const btnClose = document.getElementById('close-sidebar');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            function toggleSidebar(open) {
+                if (open) {
+                    sidebar.classList.remove('translate-x-full');
+                    overlay.classList.remove('hidden');
+                    // Petit délai pour l'animation d'opacité
+                    setTimeout(() => overlay.classList.remove('opacity-0'), 10); 
+                    document.body.style.overflow = 'hidden'; // Empêcher le scroll du fond
+                } else {
+                    sidebar.classList.add('translate-x-full');
+                    overlay.classList.add('opacity-0');
+                    setTimeout(() => overlay.classList.add('hidden'), 400); // Attendre la fin de l'anim
+                    document.body.style.overflow = '';
+                }
+            }
+
+            btnOpen.addEventListener('click', () => toggleSidebar(true));
+            btnClose.addEventListener('click', () => toggleSidebar(false));
+            overlay.addEventListener('click', () => toggleSidebar(false));
+            mobileLinks.forEach(link => link.addEventListener('click', () => toggleSidebar(false)));
+
+            // 3. ANIMATIONS AU SCROLL (Intersection Observer)
+            const reveals = document.querySelectorAll('.reveal');
+            const chartBars = document.querySelectorAll('.chart-bar');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Animation d'apparition classique
+                        entry.target.classList.add('active');
+                        
+                        // Si c'est la zone des graphiques, on déclenche l'animation des barres
+                        if (entry.target.id === 'charts-container') {
+                            chartBars.forEach(bar => {
+                                const targetWidth = bar.getAttribute('data-width');
+                                setTimeout(() => {
+                                    bar.style.width = targetWidth;
+                                }, 300); // Petit délai pour laisser le conteneur apparaître d'abord
+                            });
+                        }
+                        
+                        // Optionnel : arrêter d'observer une fois apparu (pour ne pas rejouer)
+                        // observer.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            reveals.forEach(el => observer.observe(el));
+
+            // 4. CHANGEMENT DE STYLE DE LA NAVBAR AU SCROLL
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.replace('bg-brand-light/95', 'bg-white/95');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.replace('bg-white/95', 'bg-brand-light/95');
+                }
+            });
+
+            // 5. SUBMIT DU FORMULAIRE (Démo)
+            const form = document.getElementById('b2b-form');
+            if(form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const btn = form.querySelector('button[type="submit"]');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="ph-fill ph-check-circle text-xl"></i> Demande Envoyée !';
+                    btn.classList.replace('bg-brand-dark', 'bg-brand-sage');
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.replace('bg-brand-sage', 'bg-brand-dark');
+                        form.reset();
+                    }, 4000);
+                });
+            }
+        });
+
+        // Fonction globale appelée par le bouton close du HTML
+        function closePopup() {
+            const popup = document.getElementById('popup-modal');
+            if(popup) popup.classList.add('popup-hidden');
+        }
+    </script>
+</body>
+</html>
